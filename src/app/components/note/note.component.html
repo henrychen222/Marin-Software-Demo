@@ -17,19 +17,20 @@
       <td>{{note.date}}</td>
       <td>{{note.permission}}</td>
       <td>
-        <button pButton class="p-button-success" (click)="edit()">Edit</button>
-        <button pButton class="p-button-success" (click)="delete(note.text)">Delete</button>
+        <button pButton class="p-button-success" (click)="editNote(note.text)">Edit</button>&nbsp;
+        <button pButton class="p-button-help" (click)="deleteNote(note.text)">Delete</button>
       </td>
     </tr>
   </ng-template>
 </p-table>
-<button pButton class="p-button-warning" (click)="openModal()">Add New Note</button>
+<br><br>
+<button pButton class="p-button-warning" (click)="addNewNote()">Add New Note</button>
 
 
 <app-modal
   [displayModal]="displayModal"
   (save)="save($event)"
-  (cancel)="cancel()"
+  (cancel)="closeModal()"
 >
 </app-modal>
 &nbsp;

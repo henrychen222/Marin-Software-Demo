@@ -1,13 +1,14 @@
 <form [formGroup]="form">
   <p-dialog
     header="Edit your Note"
+    [style]="{width: '35vw'}"
     [(visible)]="displayModal"
   >
     <p>Type your New Text</p>
     <textarea formControlName="newText" rows="5" cols="30" pInputTextarea></textarea>
     <ng-template pTemplate="footer">
-      <p-button class="p-button-text" icon="pi pi-check" (click)="Cancel()">Cancel</p-button>
-      <p-button icon="pi pi-times" (click)="Add()">Add</p-button>
+      <button pButton class="p-button-danger" icon="pi pi-times" (click)="Cancel()">Cancel</button>
+      <p-button icon="pi pi-check" (click)="confirm()">OK</p-button>
     </ng-template>
   </p-dialog>
 </form>

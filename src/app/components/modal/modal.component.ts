@@ -31,7 +31,7 @@ export class ModalComponent implements OnInit {
     this.cancel.emit();
   }
 
-  Add() {
+  confirm() {
     this.displayModal = false;
     const newText = this.form.get('newText')?.value;
     this.save.emit(newText);
