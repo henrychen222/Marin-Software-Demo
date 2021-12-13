@@ -25,10 +25,10 @@ export class NoteDao {
 
   async addNote(note: Note) {
     try {
-      const text = note?.note_text,
-        date = note?.note_date,
-        permission = note?.note_permission;
-      const query = `INSERT INTO ${table} (note_text, note_date, note_permission)
+      const text = note?.text,
+        date = note?.date,
+        permission = note?.permission;
+      const query = `INSERT INTO ${table} (text, date, permission)
       VALUES ('${text}', '${date}', '${permission}');`;
       Logger.log(query);
       await this.noteRepo.query(query);
@@ -37,15 +37,53 @@ export class NoteDao {
     }
   }
 
+  async updateNote(id: number, text: string): Promise<boolean> {
+    let error = false;
+    try {
+      const query = `UPDATE ${table} SET text = '${text}' WHERE id = ${id};`;
+      Logger.log(query);
+      await this.noteRepo.query(query);
+    } catch (e) {
+      error = true;
+      Logger.error(e);
+    }
+    return error;
+  }
+
   async getNoteByText(text: string) {
     try {
-      const where = `WHERE N.note_text = '${text}'`;
+      const where = `WHERE N.text = '${text}'`;
       const query = `SELECT * FROM ${table} AS N ${where};`;
       Logger.log(query);
       return await this.noteRepo.query(query);
     } catch (e) {
       Logger.error(e);
     }
+  }
+
+  async getNoteById(id: number) {
+    try {
+      const where = `WHERE N.id = '${id}'`;
+      const query = `SELECT * FROM ${table} AS N ${where};`;
+      Logger.log(query);
+      return await this.noteRepo.query(query);
+    } catch (e) {
+      Logger.error(e);
+    }
+  }
+
+  async removeNoteById(id: number) {
+    let error = false;
+    try {
+      const where = `WHERE ${table}.id = ${id}`;
+      const query = `DELETE FROM ${table} ${where};`;
+      Logger.log(query);
+      await this.noteRepo.query(query);
+    } catch (e) {
+      error = true;
+      Logger.error(e);
+    }
+    return error;
   }
 
   async clearAllNotes() {

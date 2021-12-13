@@ -5,12 +5,12 @@ export class Note {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', name: 'note_text', nullable: false })
-  note_text: string;
+  @Column({ type: 'varchar', name: 'text', nullable: false })
+  text: string;
 
-  @Column({ type: 'varchar', name: 'note_date', nullable: false })
-  note_date: string;
+  @Column({ type: 'varchar', name: 'date', nullable: false })
+  date: string;
 
-  @Column({ type: 'varchar', name: 'note_permission', nullable: false })
-  note_permission: string;
+  @Column({ type: 'varchar', name: 'permission', nullable: false })
+  permission: string;
 }

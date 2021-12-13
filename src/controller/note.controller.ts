@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { NoteService } from '../service/note.service';
 import { Note } from '../model/note';
 
@@ -22,6 +22,24 @@ export class NoteController {
   @Post('add')
   async addNote(@Body() note: Note) {
     return await this.noteService.addNote(note);
+  }
+
+  /*
+    {
+      "id": 1,
+      "text": "test",
+      "date": "12/13/2021",
+      "permission": "yes"
+    }
+   */
+  @Put('update')
+  async updateNote(@Body() note: Note) {
+    return await this.noteService.updateNote(note);
+  }
+
+  @Delete('remove')
+  async removeNote(@Query() path_variable) {
+    return await this.noteService.removeNote(path_variable.id);
   }
 
   @Delete('clear')
