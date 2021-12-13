@@ -1,8 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Note} from '../../models/note';
 import {DataService} from '../../store/data.service';
 import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
 import {NoteConstant} from '../../constants/note.constant';
+import {NoteService} from '../../services/note.service';
+import {first} from 'rxjs/operators';
 
 @UntilDestroy({checkProperties: true})
 @Component({
@@ -10,7 +12,7 @@ import {NoteConstant} from '../../constants/note.constant';
   templateUrl: './note.component.html',
   styleUrls: ['./note.component.css']
 })
-export class NoteComponent implements OnInit {
+export class NoteComponent implements OnInit, AfterViewInit {
 
   NotesData!: Note[];
   activeNote!: Note;
@@ -18,37 +20,22 @@ export class NoteComponent implements OnInit {
   addOrEdit!: string;
   currentNoteText!: string;
 
-  constructor(private dataService: DataService) {
+  constructor(private readonly dataService: DataService, private readonly noteService: NoteService) {
   }
 
-  ngOnInit(): void {
-    this.NotesData = [];
+  ngOnInit() {
     this.loading();
   }
 
-  loading() {
-    // this.NotesData = [
-    //   {
-    //     id: 1,
-    //     text: 'This is your first text',
-    //     date: new Date().toDateString(),
-    //     permission: 'yes'
-    //   },
-    //   {
-    //     id: 2,
-    //     text: 'This is your second text',
-    //     date: new Date().toDateString(),
-    //     permission: 'yes'
-    //   },
-    // ];
+  ngAfterViewInit() {
+    // console.log('data', this.NotesData);
+  }
 
-    // TODO: try to use a front end database, but seems not work. Think the better way is to create a backend with DB
-    this.dataService
-      .getListener(NoteConstant.ACTIVE_NOTE)
-      .pipe(untilDestroyed(this))
-      .subscribe((activeNote: any) => {
-        // console.log('activeNote', activeNote);
-      });
+  loading() {
+    const notes$ = this.noteService.getNotes();
+    notes$.subscribe(notes => {
+      this.NotesData = notes;
+    });
   }
 
   addNewNote() {
@@ -58,20 +45,52 @@ export class NoteComponent implements OnInit {
 
   save(newText: any) {
     if (this.addOrEdit.toLowerCase() === 'add') {
+      const now = new Date(), year = now.getFullYear(), month = now.getMonth() + 1, date = now.getDate();
       const newNote = {
         id: this.NotesData.length + 1,
         text: newText,
-        date: new Date().toDateString(),
+        date: `${month}/${date}/${year}`,
         permission: 'yes'
       };
-      this.NotesData.push(newNote);
       // this.dataService.set(NoteConstant.ACTIVE_NOTE, {...newNote});
+      this.addNoteToDB(newNote);
     } else if (this.addOrEdit.toLowerCase() === 'edit') {
       const idx = this.searchByText(this.currentNoteText);
       const note = this.NotesData[idx];
-      this.NotesData[idx] = {...note, text: newText};
+      const newNote = {...note, text: newText};
+      this.updateNoteToDB(newNote, idx);
     }
     this.displayModal = false;
+  }
+
+  addNoteToDB(newNote: Note) {
+    const add$ = this.noteService.addNote(newNote);
+    add$.pipe(first()).subscribe(res => {
+      alert(res.message);
+      if (res.status === 'Accepted') {
+        this.NotesData.push(newNote);
+      }
+    });
+  }
+
+  updateNoteToDB(newNote: Note, idx: number) {
+    const update$ = this.noteService.updateNote(newNote);
+    update$.subscribe(res => {
+      alert(res.message);
+      if (res.status === 'OK') {
+        this.NotesData[idx] = newNote;
+      }
+    });
+  }
+
+  removeNoteToDB(id: number, idx: number) {
+    const remove$ = this.noteService.removeNote(id);
+    remove$.subscribe(res => {
+      alert(res.message);
+      if (res.status === 'OK') {
+        this.NotesData.splice(idx, 1);
+      }
+    });
   }
 
   searchByText(text: string) {
@@ -87,7 +106,7 @@ export class NoteComponent implements OnInit {
 
   deleteNote(text: string) {
     let idx = this.searchByText(text);
-    this.NotesData.splice(idx, 1);
+    this.removeNoteToDB(this.NotesData[idx].id, idx);
   }
 
   editNote(text: string) {
