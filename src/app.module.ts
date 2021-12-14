@@ -4,6 +4,7 @@ import { Note } from './model/note';
 import { NoteController } from './controller/note.controller';
 import { NoteService } from './service/note.service';
 import { NoteDao } from './dao/note.dao';
+import { SwaggerModule } from '@nestjs/swagger';
 
 @Module({
   imports: [
