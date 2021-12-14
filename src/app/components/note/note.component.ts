@@ -1,10 +1,11 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Note} from '../../models/note';
 import {DataService} from '../../store/data.service';
-import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
+import {UntilDestroy} from '@ngneat/until-destroy';
 import {NoteConstant} from '../../constants/note.constant';
 import {NoteService} from '../../services/note.service';
 import {first} from 'rxjs/operators';
+import {Table} from 'primeng/table';
 
 @UntilDestroy({checkProperties: true})
 @Component({
@@ -29,6 +30,10 @@ export class NoteComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     // console.log('data', this.NotesData);
+  }
+
+  sortAlphabeticalOrder() {
+    this.NotesData.sort((x, y) => x.text.localeCompare(y.text));
   }
 
   loading() {
@@ -122,4 +127,6 @@ export class NoteComponent implements OnInit, AfterViewInit {
   closeModal() {
     this.displayModal = false;
   }
+
 }
+

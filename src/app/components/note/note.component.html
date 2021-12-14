@@ -1,12 +1,28 @@
+<h1 align="center">Welcome to Note Application</h1>
 <p-table
-  [value]="NotesData"
-  [paginator]="true"
-  [rows]="10"
-  responsiveLayout="scroll">
+    #filter
+    sortMode="multiple"
+    [globalFilterFields]="['text']"
+    [value]="NotesData"
+    [paginator]="true"
+    [rows]="10"
+    responsiveLayout="scroll">
+  <ng-template pTemplate="caption">
+    <div class="p-d-flex">
+      <span class="p-input-icon-left p-ml-auto">
+        <input pInputText type="text" (input)="filter.filterGlobal($event.target?.value, 'contains')"
+               placeholder="Search Text"/>
+      </span>
+    </div>
+  </ng-template>
   <ng-template pTemplate="header">
     <tr>
-      <th>Text Content</th>
-      <th>Creation Date</th>
+      <th pSortableColumn="text">Text Content
+        <p-sortIcon field="text"></p-sortIcon>
+      </th>
+      <th pSortableColumn="date">Creation Date
+        <p-sortIcon field="date"></p-sortIcon>
+      </th>
       <th>Permission to Edit</th>
       <th>Operations</th>
     </tr>
