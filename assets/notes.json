@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1",
+    "text": "This is your first text",
+    "date": "",
+    "permission": "yes"
+  },
+  {
+    "id": "2",
+    "text": "This is your second text",
+    "date": "",
+    "permission": "yes"
+  }
+]
